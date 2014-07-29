@@ -1,0 +1,17 @@
+<h2>Lifetime Value</h2>
+<table class="table">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Lifetime Value</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @users.sort { |a, b| b.lifetime_value <=> a.lifetime_value }.each do |user| %>
+      <tr>
+        <td><%= user.name %></td>
+        <td>$<%= user.lifetime_value %></td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
