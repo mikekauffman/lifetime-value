@@ -1,6 +1,7 @@
 class Member
   def filter_current(users_list)
-    users_list.map { |member| member if active?(member) }.compact
+    current_users = users_list.map { |member| member if active?(member) }.compact
+    current_users.sort_by { |user| user[:name]}
   end
 
   def active?(member)
