@@ -17,4 +17,5 @@ group :development, :test do
   gem 'rspec-collection_matchers', '~> 1.0.0'
   gem "capybara", "2.3.0"
   gem "faker"
+  gem 'launchy'
 end
