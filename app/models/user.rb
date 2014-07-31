@@ -6,22 +6,31 @@ class User < ActiveRecord::Base
   validates :name, presence: true, uniqueness: {case_sensitive: false}
 
   def lifetime_value
-    i = 0
     lifetime_value = 0
-    subscription_events
-    while i < subscription_events.length
-      sorted = subscription_events.sort { |a, b| a.date <=> b.date }
-      start_date = sorted[i].date
-      if sorted.length == 1 || sorted[i + 1] == nil
-        end_date = Date.today.beginning_of_month
-      else
-        end_date = sorted[i + 1].date
-      end
-      duration = (end_date.year * 12 + end_date.month) - (start_date.year * 12 + start_date.month)
-      lifetime_value += (sorted[i].price_per_month_in_cents * duration)
-      i += 1
+    events = subscription_events.order(:date)
+
+    events.each_with_index do |starting_event, i|
+      starting_date = starting_event.date
+      ending_date = if events[i + 1].nil?
+                      Date.today
+                    else
+                      events[i + 1].date
+                    end
+      lifetime_value += value_for_date_range(
+        months_between(ending_date, starting_date),
+        starting_event.price_per_month_in_cents
+      )
     end
+
     Money.new(lifetime_value, "USD")
+  end
+
+  def value_for_date_range(number_of_months, price_per_month)
+    price_per_month * number_of_months
+  end
+
+  def months_between(ending_date, starting_date)
+    (ending_date.month - starting_date.month) + 12 * (ending_date.year - starting_date.year)
   end
 
 end
